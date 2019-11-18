@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.hard.study.dao.oauth">
+
+	<select id="getRoleHierarchy" resultType="com.hard.study.vo.oauth.RoleHierarchyVo">
+		SELECT
+			g.id AS id,
+			g.group_name AS groupName,
+			ga.group_id AS groupId,
+			ga.authority AS groupAuthority,
+			a.username AS username,
+			a.authority AS authority
+		FROM
+			`groups` AS g INNER JOIN group_authorities AS ga ON g.id = ga.group_id
+			INNER JOIN authorities AS a ON ga.group_id = a.groupId
+		ORDER BY
+			g.id
+		ASC
+	</select>
+	
+	<select id="getUserResource" parameterType="com.hard.study.vo.oauth.OAuthResourceAuthorityVo" resultType="com.hard.study.vo.oauth.OAuthResourceAuthorityVo">
+		SELECT
+			or.idx AS idxOauthResource,
+			or.resource_id AS resourceId,
+			or.resource_name AS resourceName,
+			or.resource_pattern AS resourcePattern,
+			or.resource_type AS resourceType,
+			or.httpmethod AS httpMethod,
+			or.sort_order AS sortOrder,
+			ora.idx AS idxOauthResourceAuthority,
+			ora.username AS userName,
+			ora.authority AS authority
+		FROM
+			oauth_resource AS `or` INNER JOIN oauth_resource_authority AS ora ON or.resource_id = ora.resource_id
+		WHERE
+			ora.username = #{userName};
+	</select>
+	
+</mapper>
