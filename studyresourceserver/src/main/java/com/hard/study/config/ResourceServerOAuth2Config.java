@@ -15,6 +15,7 @@ import org.springframework.security.oauth2.provider.token.ResourceServerTokenSer
 import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.security.web.access.intercept.FilterSecurityInterceptor;
 import org.springframework.security.web.authentication.preauth.AbstractPreAuthenticatedProcessingFilter;
+import org.springframework.web.cors.CorsUtils;
 
 @Configuration
 // 리소스 서버에 엑세스 하려면 전체인증 ( access_token )이 필요.
@@ -45,6 +46,7 @@ public class ResourceServerOAuth2Config extends ResourceServerConfigurerAdapter 
 	}
 	
 	// 자원서버의 접근권한을 설정
+	// cors, csrf 허용
 	@Override
 	public void configure(HttpSecurity http) throws Exception {
 		
@@ -54,23 +56,22 @@ public class ResourceServerOAuth2Config extends ResourceServerConfigurerAdapter 
 					.disable();
 		
 		http
-			.requestMatchers()
+			.cors()
 			.and()
 			.authorizeRequests()
-				// antMatchers에 있는 링크는 모두 허용하지만 이외의 요청은 인증이 필요하다.
-				.antMatchers("/studyresourceserver/**", "/oauth/*")
-					.permitAll()
-				.anyRequest()
-					.authenticated()
+			.requestMatchers(CorsUtils:: isPreFlightRequest)
+				.permitAll()
+			// antMatchers에 있는 링크는 모두 허용하지만 이외의 요청은 인증이 필요하다.
+			.antMatchers("/studyresourceserver/**", "/oauth/*")
+				.permitAll()
+			.anyRequest()
+				.authenticated()
 			.and()
 				// 필터 활성화
 				.addFilterBefore(cookieTokenFilter(), AbstractPreAuthenticatedProcessingFilter.class)
 				.addFilterAfter(filterSecurityInterceptor, FilterSecurityInterceptor.class)
 			.exceptionHandling()
-				.accessDeniedHandler(new OAuth2AccessDeniedHandler())
-			.and()
-			.csrf()
-				.disable();
+				.accessDeniedHandler(new OAuth2AccessDeniedHandler());
 		
 	}
 	

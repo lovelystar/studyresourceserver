@@ -3,6 +3,7 @@ package com.hard.study.config;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.apache.tomcat.jdbc.pool.DataSource;
@@ -12,6 +13,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
+import org.springframework.core.env.Environment;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.security.access.AccessDecisionManager;
 import org.springframework.security.access.AccessDecisionVoter;
@@ -35,6 +37,9 @@ import org.springframework.security.oauth2.provider.vote.ScopeVoter;
 import org.springframework.security.web.access.intercept.FilterInvocationSecurityMetadataSource;
 import org.springframework.security.web.access.intercept.FilterSecurityInterceptor;
 import org.springframework.util.FileCopyUtils;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 @Configuration
 @EnableWebSecurity
@@ -50,9 +55,18 @@ public class ResourceServerSecurityConfig extends WebSecurityConfigurerAdapter {
 	@Autowired
 	private DataSource dataSource;
 	
+	@Autowired
+	private Environment env;
+	
 	// 접근 권한 설정
+	// cors, csrf 허용
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
+		
+		http
+			.cors()
+				.and()
+					.csrf();
 		
 		http
 			.authorizeRequests()
@@ -64,10 +78,27 @@ public class ResourceServerSecurityConfig extends WebSecurityConfigurerAdapter {
 				// SessionCreationPolicy.IFREQUIRED : 기본값, 필요한 경우에만 생성
 				// SessionCreationPolicy.NEVER : 세션을 만들지 않겠다
 				// SessionCreationPolicy.STATELESS : 보안을 위해 세션이 생성되거나 사용되지 않는다
-				.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-			.and()
-			.csrf()
-				.disable();
+				.sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+		
+	}
+	
+	// study ( client ) 에서 넘어오는거 허용한다.
+	@Bean
+	public CorsConfigurationSource corsConfigurationSource() {
+		
+		CorsConfiguration corsConfig = new CorsConfiguration();
+		
+		corsConfig.setAllowedOrigins(Arrays.asList(env.getProperty("config.oauth2.study-base-url"))); // http://localhost:8081 으로 오는 것을 허용
+		corsConfig.setAllowCredentials(true);
+		corsConfig.setAllowedHeaders(Arrays.asList("Content-Type", "X-XSRF-TOKEN", "Authorization", "Content-Length", "X-Requested-With")); // Header
+		corsConfig.setAllowedMethods(Arrays.asList("*")); // GET, POST 같은 것
+		corsConfig.setMaxAge(3600L);
+		
+		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+		
+		source.registerCorsConfiguration("/**", corsConfig);
+		
+		return source;
 		
 	}
 	
