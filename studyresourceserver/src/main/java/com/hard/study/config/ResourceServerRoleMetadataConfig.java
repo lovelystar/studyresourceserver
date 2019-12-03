@@ -95,13 +95,9 @@ public class ResourceServerRoleMetadataConfig implements FilterInvocationSecurit
 				// System.out.println("key = " + key + ", value = " + map.get(key));}
 				for(Map.Entry<String, Collection<ConfigAttribute>> entry : requestMap.entrySet()) {
 					
-					System.out.println("entry.getValue = " + entry.getValue());
 					int rowSize = requestHttpMap.get(entry.getKey()).size(); // List<OAuthResourceAuthorityVo>의 크기
-					System.out.println("rowSize = " + rowSize);
 					
 					for(int i=0; i<rowSize; i++) {
-						
-						System.out.println("requestHttpMap.get(entry.getKey()).get(i) = " + requestHttpMap.get(entry.getKey()).get(i));
 						
 						OAuthResourceAuthorityVo securityResources = requestHttpMap.get(entry.getKey()).get(i);
 						
@@ -193,30 +189,25 @@ public class ResourceServerRoleMetadataConfig implements FilterInvocationSecurit
 							
 							configAttribute = new SecurityConfig(AUTHENTICATED_FULLY);
 							configAttributeArray.add(configAttribute);
-							System.out.println("for 전 configAttribute1 = " + configAttribute);
 							
 							// 익명의 사용자가 아니고, remember me 사용자일 때 AUTHENTICATED_REMEMBERED
 						} else if(authenticationTrustResolver.isRememberMe(oauth2) && !authenticationTrustResolver.isAnonymous(oauth2)) {
 							
 							configAttribute = new SecurityConfig(AUTHENTICATED_REMEMBERED);
 							configAttributeArray.add(configAttribute);
-							System.out.println("for 전 configAttribute2 = " + configAttribute);
 							
 							// 익명의 사용자 이고, remember me 사용자가 아닐 때 AUTHENTICATED_ANONYMOUSLY
 						} else if(authenticationTrustResolver.isAnonymous(oauth2) && !authenticationTrustResolver.isRememberMe(oauth2)) {
 							
 							configAttribute = new SecurityConfig(AUTHENTICATED_ANONYMOUSLY);
 							configAttributeArray.add(configAttribute);
-							System.out.println("for 전 configAttribute3 = " + configAttribute);
 							
 						}
-						System.out.println("for 전 configAttributeArray = " + configAttributeArray);
+						
 						for(int i=0; i<scope.size(); i++) {
 							
 							configAttribute = new SecurityConfig(scope_Prefix.toUpperCase() + scope.toArray()[i].toString().toUpperCase());
 							configAttributeArray.add(configAttribute);
-							System.out.println("for configAttribute = " + configAttribute);
-							System.out.println("for configAttributeArray = " + configAttributeArray);
 							
 						}
 						
@@ -230,9 +221,6 @@ public class ResourceServerRoleMetadataConfig implements FilterInvocationSecurit
 				requestMap.put(resourceUrl.getResourceId(), configAttributeArray);
 				configAttributeArray = new ArrayList<>();
 				requestHttpMap.put(resourceUrl.getResourceId(), userInfoVo.getResourceAuthorityList());
-				
-				System.out.println("requestMap = " + requestMap);
-				System.out.println("requestHttpMap = " + requestHttpMap);
 				
 			}
 			

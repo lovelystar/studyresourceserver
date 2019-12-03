@@ -67,7 +67,6 @@ public class ResourceServerCookieTokenFilterConfig implements Filter, Applicatio
 	public void setApplicationEventPublisher(ApplicationEventPublisher applicationEventPublisher) {
 		
 		// TODO Auto-generated method stub
-		System.out.println("cookieTokenFilter setApplicationEventPublisher");
 		this.applicationEventPublisher = applicationEventPublisher;
 		
 	}
@@ -83,7 +82,6 @@ public class ResourceServerCookieTokenFilterConfig implements Filter, Applicatio
 			throws IOException, ServletException {
 		
 		// TODO Auto-generated method stub
-		System.out.println("cookieTokenFilter doFilter");
 		
 		final HttpServletRequest req = (HttpServletRequest) request;
 		final HttpServletResponse res = (HttpServletResponse) response;
