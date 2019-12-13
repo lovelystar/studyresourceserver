@@ -19,6 +19,8 @@ import com.hard.study.service.oauth.ReactResourceService;
 import com.hard.study.vo.oauth.OAuthResourceAuthorityVo;
 import com.hard.study.vo.oauth.UserInfoVo;
 
+// @RestController
+// @PreAuthorize("hasRole('USER'))
 @Controller
 @RequestMapping(value="/authenticated")
 public class ResourceServerController {
@@ -48,7 +50,7 @@ public class ResourceServerController {
 		
 		List<OAuthResourceAuthorityVo> result = new ArrayList<OAuthResourceAuthorityVo>();
 		result = reactResourceService.getUserResource(vo);
-		
+		System.out.println("result = " + result);
 		return new ResponseEntity<List<OAuthResourceAuthorityVo>>(result, HttpStatus.OK);
 		
 	}
@@ -59,5 +61,13 @@ public class ResourceServerController {
 		return "hellllllo";
 		
 	}
+	
+//	@RequestMapping(value="/")
+//	public Principal principal(Principal principal) {
+//		
+//		System.out.println("hello!");
+//		return principal;
+//		
+//	}
 	
 }
