@@ -50,7 +50,7 @@ public class ResourceServerController {
 		
 		List<OAuthResourceAuthorityVo> result = new ArrayList<OAuthResourceAuthorityVo>();
 		result = reactResourceService.getUserResource(vo);
-		System.out.println("result = " + result);
+		
 		return new ResponseEntity<List<OAuthResourceAuthorityVo>>(result, HttpStatus.OK);
 		
 	}

@@ -72,7 +72,7 @@ public class ResourceServerTokenExtractor implements TokenExtractor {
 			
 			// 복호화
 			tokenValue = aes.AES_Decrypt(accessToken);
-			
+			System.out.println("tokenValue = " + tokenValue);
 			// Bearer
 			tokenType = request.getHeader("Authorization").substring(0, 6);
 			
